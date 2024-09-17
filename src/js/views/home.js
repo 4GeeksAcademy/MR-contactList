@@ -1,11 +1,13 @@
 import React from "react";
-import { ContactList } from "./contactlist";
-import { AddContact } from "./addcontact";
+import rigoImage from "../../img/rigo-baby.jpg";
+import "../../styles/home.css";
 
 export const Home = () => (
   <div className="text-center mt-5">
-    <h1>Contact Management</h1>
-    <ContactList />
-    <AddContact />
+    <h1>create user</h1>
+
+    <a href="#" className="btn btn-success">
+      If you see this green button, bootstrap is working
+    </a>
   </div>
 );

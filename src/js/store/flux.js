@@ -1,101 +1,83 @@
 const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
-      APIbaseURL: "https://playground.4geeks.com/contact/",
-      contactList: [],
-      loading: false,
-      error: null,
+      contacts: [
+        {
+          id: 1,
+          name: "John Doe",
+          phone: "123456789",
+          email: "email@email.com",
+        },
+        {
+          id: 2,
+          name: "Juan Nieves",
+          phone: "123456799",
+          email: "email2@email.com",
+        },
+      ],
     },
     actions: {
-      // Use getActions to call a function within a fuction
-      getContacts: async (agendaSlug) => {
-        const store = getStore();
-        setStore({ loading: true, error: null });
+      addContact: async (newContact) => {
         try {
-          const response = await fetch(
-            `${store.APIbaseURL}agendas/${agendaSlug}/contacts`
+          // check if slug already exists, if not, create it
+          const slug = "MatiasRivas";
+          const checkResponse = await fetch(
+            `https://playground.4geeks.com/contact/agendas/${slug}`
           );
-          if (response.ok) {
-            const data = await response.json();
-            setStore({ contactList: data.contacts, loading: false });
-          } else {
-            setStore({ loading: false, error: "Failed to load contacts" });
+          if (!checkResponse.ok) {
+            if (checkResponse.status === 404) {
+              const createSlug = await fetch(
+                `https://playground.4geeks.com/contact/agendas/`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ slug: slug }),
+                }
+              );
+              if (!createSlug.ok) {
+                throw new Error("Failed to create agenda");
+              }
+            } else {
+              throw new Error(
+                "Error checking agenda: " + checkResponse.statusText
+              );
+            }
           }
-        } catch (error) {
-          setStore({
-            loading: false,
-            error: "An error occurred while fetching contacts",
-          });
-        }
-      },
-      addContact: async (agendaSlug, contactData) => {
-        const store = getStore();
-        setStore({ loading: true, error: null });
-        try {
+
           const response = await fetch(
-            `${store.APIbaseURL}agendas/${agendaSlug}/contacts`,
+            `https://playground.4geeks.com/contact/agendas/${slug}/contacts`,
             {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(contactData),
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(newContact),
             }
           );
+
           if (response.ok) {
-            getActions().getContacts(agendaSlug);
+            getActions().fetchContacts();
           } else {
-            setStore({ loading: false, error: "Failed to add contact" });
+            console.error("Error adding contact:", response.statusText);
           }
         } catch (error) {
-          setStore({
-            loading: false,
-            error: "An error occurred while adding the contact",
-          });
+          console.error("Error adding contact:", error);
         }
       },
-      updateContact: async (agendaSlug, contactId, contactData) => {
-        const store = getStore();
-        setStore({ loading: true, error: null });
+
+      fetchContacts: async () => {
         try {
+          const slug = "MatiasRivas";
+
           const response = await fetch(
-            `${store.APIbaseURL}agendas/${agendaSlug}/contacts/${contactId}`,
-            {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(contactData),
-            }
+            `https://playground.4geeks.com/contact/agendas/${slug}/contacts`
           );
-          if (response.ok) {
-            getActions().getContacts(agendaSlug);
-          } else {
-            setStore({ loading: false, error: "Failed to update contact" });
-          }
+          const data = await response.json();
+          setStore({ contacts: data });
         } catch (error) {
-          setStore({
-            loading: false,
-            error: "An error occurred while updating the contact",
-          });
-        }
-      },
-      deleteContact: async (agendaSlug, contactId) => {
-        const store = getStore();
-        setStore({ loading: true, error: null });
-        try {
-          const response = await fetch(
-            `${store.APIbaseURL}agendas/${agendaSlug}/contacts/${contactId}`,
-            {
-              method: "DELETE",
-            }
-          );
-          if (response.ok) {
-            getActions().getContacts(agendaSlug);
-          } else {
-            setStore({ loading: false, error: "Failed to delete contact" });
-          }
-        } catch (error) {
-          setStore({
-            loading: false,
-            error: "An error occurred while deleting the contact",
-          });
+          console.error("Error fetching contacts:", error);
         }
       },
     },
