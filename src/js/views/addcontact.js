@@ -14,9 +14,11 @@ export const AddContact = () => {
   });
 
   useEffect(() => {
-    const editContact = store.contacts.find((c) => c.id === parseInt(id));
-    if (editContact) {
-      setContact(editContact);
+    if (Array.isArray(store.contacts) && id) {
+      const editContact = store.contacts.find((c) => c.id === parseInt(id));
+      if (editContact) {
+        setContact(editContact);
+      }
     }
   }, [id, store.contacts]);
 
