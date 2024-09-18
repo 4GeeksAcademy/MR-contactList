@@ -7,34 +7,24 @@ const getState = ({ getStore, getActions, setStore }) => {
       fetchContacts: async () => {
         try {
           const slug = "MatiasRivas";
-
-          const checkResponse = await fetch(
-            `https://playground.4geeks.com/contact/agendas/${slug}`
-          );
-          if (!checkResponse.ok && checkResponse.status === 404) {
-            const createAgenda = await fetch(
-              `https://playground.4geeks.com/contact/agendas/${slug}`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ slug: slug }),
-              }
-            );
-            if (!createAgenda.ok) {
-              throw new Error("Failed to create agenda");
-            }
-          }
-
           const response = await fetch(
-            `https://playground.4geeks.com/contact/agendas/${slug}/contacts`
+            `https://playground.4geeks.com/contact/agendas/${slug}/contacts`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
           );
           if (!response.ok) {
             throw new Error("Failed to fetch contacts");
           }
           const data = await response.json();
-          setStore({ contacts: data });
+          if (data && Array.isArray(data.contacts)) {
+            setStore({ contacts: data.contacts });
+          } else {
+            console.error("Unexpected response structure:", data);
+            setStore({ contacts: [] });
+          }
         } catch (error) {
           console.error("Error fetching contacts:", error);
         }

@@ -9,7 +9,7 @@ export const ContactList = () => {
 
   useEffect(() => {
     actions.fetchContacts();
-  }, [store.contacts]);
+  }, []);
 
   return (
     <>
