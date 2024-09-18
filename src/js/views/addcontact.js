@@ -1,55 +1,96 @@
-// import React, { useState, useContext } from "react";
-// import { Context } from "../store/appContext";
+import React, { useContext, useEffect, useState } from "react";
+import { Context } from "../store/appContext";
+import { useNavigate, useParams } from "react-router-dom";
 
-// export const AddContact = () => {
-//   const { actions } = useContext(Context);
-//   const [contactData, setContactData] = useState({
-//     name: "",
-//     phone: "",
-//     email: "",
-//     address: "",
-//   });
+export const AddContact = () => {
+  const { store, actions } = useContext(Context);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [contact, setContact] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    address: "",
+  });
 
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setContactData({ ...contactData, [name]: value });
-//   };
+  useEffect(() => {
+    const editContact = store.contacts.find((c) => c.id === parseInt(id));
+    if (editContact) {
+      setContact(editContact);
+    }
+  }, [id, store.contacts]);
 
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     actions.addContact("Matias", contactData);
-//   };
+  const handleChange = (e) => {
+    setContact({ ...contact, [e.target.name]: e.target.value });
+  };
 
-//   return (
-//     <div>
-//       <h1>Add a new contact</h1>
-//       <form onSubmit={handleSubmit}>
-//         <input
-//           type="text"
-//           name="name"
-//           placeholder="Name"
-//           onChange={handleChange}
-//         />
-//         <input
-//           type="text"
-//           name="phone"
-//           placeholder="Phone"
-//           onChange={handleChange}
-//         />
-//         <input
-//           type="text"
-//           name="email"
-//           placeholder="Email"
-//           onChange={handleChange}
-//         />
-//         <input
-//           type="text"
-//           name="address"
-//           placeholder="Address"
-//           onChange={handleChange}
-//         />
-//         <button type="submit">Save</button>
-//       </form>
-//     </div>
-//   );
-// };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (id) {
+      actions.updateContact(id, contact);
+    } else {
+      actions.addContact(contact);
+    }
+    navigate("/");
+  };
+  return (
+    <>
+      <div className="container">
+        <h1>Add new contact</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <input
+              type="text"
+              className="form-control"
+              id="name"
+              name="name"
+              value={contact.name}
+              onChange={handleChange}
+              required
+              placeholder="Name"
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="email"
+              className="form-control"
+              id="email"
+              name="email"
+              value={contact.email}
+              onChange={handleChange}
+              required
+              placeholder="Email"
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="text"
+              className="form-control"
+              id="phone"
+              name="phone"
+              value={contact.phone}
+              onChange={handleChange}
+              required
+              placeholder="phone number"
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="text"
+              className="form-control"
+              id="address"
+              name="address"
+              value={contact.address}
+              onChange={handleChange}
+              required
+              placeholder="address"
+            />
+          </div>
+          <button type="submit" className=" btn btn-primary">
+            {id ? "Update Contact" : "Save Contact"}
+          </button>
+        </form>
+      </div>
+    </>
+  );
+};

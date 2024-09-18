@@ -1,25 +1,11 @@
 const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
-      contacts: [
-        {
-          id: 1,
-          name: "John Doe",
-          phone: "123456789",
-          email: "email@email.com",
-        },
-        {
-          id: 2,
-          name: "Juan Nieves",
-          phone: "123456799",
-          email: "email2@email.com",
-        },
-      ],
+      contacts: [],
     },
     actions: {
       addContact: async (newContact) => {
         try {
-          // check if slug already exists, if not, create it
           const slug = "MatiasRivas";
           const checkResponse = await fetch(
             `https://playground.4geeks.com/contact/agendas/${slug}`
@@ -66,7 +52,6 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.error("Error adding contact:", error);
         }
       },
-
       fetchContacts: async () => {
         try {
           const slug = "MatiasRivas";
@@ -78,6 +63,48 @@ const getState = ({ getStore, getActions, setStore }) => {
           setStore({ contacts: data });
         } catch (error) {
           console.error("Error fetching contacts:", error);
+        }
+      },
+      updateContact: async (contactId, updatedContact) => {
+        try {
+          const slug = "MatiasRivas";
+          const response = await fetch(
+            `https://playground.4geeks.com/contact/agendas/${slug}/contacts/${contactId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(updatedContact),
+            }
+          );
+
+          if (response.ok) {
+            getActions().fetchContacts();
+          } else {
+            console.error("Error updating contact:", response.statusText);
+          }
+        } catch (error) {
+          console.error("Error updating contact:", error);
+        }
+      },
+      deleteContact: async (contactId) => {
+        try {
+          const slug = "MatiasRivas";
+          const response = await fetch(
+            `https://playground.4geeks.com/contact/agendas/${slug}/contacts/${contactId}`,
+            {
+              method: "DELETE",
+            }
+          );
+
+          if (response.ok) {
+            getActions().fetchContacts();
+          } else {
+            console.error("Error deleting contact:", response.statusText);
+          }
+        } catch (error) {
+          console.error("Error deleting contact:", error);
         }
       },
     },
