@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 export const AddContact = () => {
   const { store, actions } = useContext(Context);
@@ -66,7 +66,7 @@ export const AddContact = () => {
           </div>
           <div className="form-group">
             <input
-              type="text"
+              type="number"
               className="form-control"
               id="phone"
               name="phone"
@@ -92,6 +92,7 @@ export const AddContact = () => {
             {id ? "Update Contact" : "Save Contact"}
           </button>
         </form>
+        <a href="/">go back to contact list</a>
       </div>
     </>
   );

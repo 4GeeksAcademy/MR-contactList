@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from "react";
-import { Context } from "../store/appContext";
-import { ContactCard } from "../component/contactcard";
+import { Context } from "../store/appContext.js";
+import { ContactCard } from "../component/contactcard.jsx";
 import { useNavigate } from "react-router";
 
 export const ContactList = () => {
@@ -13,13 +13,17 @@ export const ContactList = () => {
 
   return (
     <>
-      <div className="container">
-        <button
-          className="btn btn-success"
-          onClick={() => navigate("add-contact")}
-        >
-          Add new contact
-        </button>
+      <div className="container mt-4">
+        <div className=" row">
+          <div className="col-12 d-flex justify-content-end ">
+            <button
+              className=" btn btn-success add-new-contact "
+              onClick={() => navigate("add-contact")}
+            >
+              Add new contact
+            </button>
+          </div>
+        </div>
         <div className="contact-list">
           {store.contacts.length > 0 ? (
             store.contacts.map((contact) => (

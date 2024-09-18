@@ -5,6 +5,8 @@ import injectContext from "./store/appContext";
 
 import { AddContact } from "./views/addcontact";
 import { ContactList } from "./views/contactlist";
+import "../styles/contactlist.css";
+import "../styles/addcontact.css";
 
 //create your first component
 const Layout = () => {
